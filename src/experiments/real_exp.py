@@ -20,14 +20,13 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 DEFAULT_RESULTS_DIR = os.path.join(PROJECT_ROOT, 'results')
 
-from models.caar import CAARModel, MLPModel, GAARModel, MLPPinballModel
+from models.caar import CAARModel, MLPModel, GAARModel, MLPPinballModel, MLPHuberModel
 from models.baseline import (
     OLSRegressor, 
     RidgeRegressor, 
     RandomForestRegressorWrapper,
     XGBoostRegressorWrapper
 )
-from models.robust import HuberRegressorWrapper
 from data.real import prepare_real_data_experiment
 from utils.metrics import evaluate_model
 from utils.visualization import (
@@ -90,13 +89,13 @@ def run_real_data_experiment(
         'RandomForest': RandomForestRegressorWrapper(n_estimators=100, random_state=random_state),
         'XGBoost': XGBoostRegressorWrapper(random_state=random_state),
         # 'LightGBM': LightGBMRegressorWrapper(random_state=random_state), # 有了 XGBoost 了，没必要用 LightGBM
-        'Huber': HuberRegressorWrapper(epsilon=1.35),
         # 'QuantileRegressor': QuantileRegressorWrapper(quantile=0.5), # Replaced by MLPPinball_Median
         # 'RANSAC': RANSACRegressorWrapper(), # 效果太差，不配其他算法比
-        'CAAR': None,
         'MLP': None,
+        'MLP_Huber': None, # Placeholder for MLPHuberModel
+        'MLP_Pinball_Median': None, # Added MLP Pinball Median placeholder
         'GAAR': None,
-        'MLP_Pinball_Median': None # Added MLP Pinball Median placeholder
+        'CAAR': None
     }
     
     # 为每个异常值比例初始化结果
@@ -140,6 +139,7 @@ def run_real_data_experiment(
             }
             caar_gaar_specific_params = {'latent_dim': 64}
             mlp_pinball_params = {'quantile': 0.5} # For Median Regression
+            mlp_huber_params = {'delta': 1.35} # For Huber Loss, corresponds to epsilon in sklearn's HuberRegressor
 
             if models['CAAR'] is None or models['CAAR'].model.input_dim != input_dim: # type: ignore
                 models['CAAR'] = CAARModel(**nn_model_params, **caar_gaar_specific_params) # type: ignore
@@ -149,6 +149,8 @@ def run_real_data_experiment(
                 models['GAAR'] = GAARModel(**nn_model_params, **caar_gaar_specific_params) # type: ignore
             if models['MLP_Pinball_Median'] is None or models['MLP_Pinball_Median'].model.input_dim != input_dim: # type: ignore
                 models['MLP_Pinball_Median'] = MLPPinballModel(**nn_model_params, **mlp_pinball_params) # type: ignore
+            if models['MLP_Huber'] is None or not hasattr(models['MLP_Huber'], 'model') or models['MLP_Huber'].model.input_dim != input_dim: # type: ignore
+                models['MLP_Huber'] = MLPHuberModel(**nn_model_params, **mlp_huber_params) # type: ignore
             
             for model_name, model in models.items():
                 print(f"    训练模型: {model_name}")

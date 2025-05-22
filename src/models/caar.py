@@ -385,24 +385,10 @@ class CAARModel:
     
     def set_params(self, **params):
         """
-        设置模型参数
-        
-        参数:
-            params: 模型参数字典
-            
-        返回:
-            self: 更新参数后的模型
+        设置模型参数，并重新初始化模型和优化器
         """
-        if 'lr' in params:
-            self.lr = params['lr']
-            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
-        
-        if 'batch_size' in params:
-            self.batch_size = params['batch_size']
-        
-        if 'epochs' in params:
-            self.epochs = params['epochs']
-        
+        # 更新存储的参数
+        self.__init__(**params) # type: ignore
         return self
 
 class MLP(nn.Module):
@@ -954,4 +940,195 @@ class MLPPinballModel:
             self.batch_size = params['batch_size']
         if 'epochs' in params:
             self.epochs = params['epochs']
+        return self
+
+# Huber Loss Function (can be replaced by nn.HuberLoss if preferred)
+def huber_loss_fn(y_true, y_pred, delta=1.0):
+    """
+    Computes the Huber loss.
+
+    Parameters:
+        y_true: Ground truth values.
+        y_pred: Predicted values.
+        delta: The point where the Huber loss changes from a quadratic to linear.
+
+    Returns:
+        The Huber loss.
+    """
+    error = y_true - y_pred
+    abs_error = torch.abs(error)
+    quadratic = torch.clamp(abs_error, max=delta)
+    linear = abs_error - quadratic
+    return torch.mean(0.5 * quadratic**2 + delta * linear)
+
+class MLPHuber(nn.Module):
+    """
+    MLP for Huber Regression. Structure is identical to the standard MLP.
+    The Huber loss will be applied in the wrapper model.
+    """
+    def __init__(self, input_dim, hidden_dims=[128, 64]):
+        super(MLPHuber, self).__init__()
+        layers = []
+        prev_dim = input_dim
+        for hidden_dim in hidden_dims:
+            layers.append(nn.Linear(prev_dim, hidden_dim))
+            layers.append(nn.ReLU())
+            prev_dim = hidden_dim
+        layers.append(nn.Linear(prev_dim, 1)) # Output a single value for regression
+        
+        self.model = nn.Sequential(*layers)
+        self.input_dim = input_dim # Store for potential re-initialization or checks
+
+    def forward(self, x):
+        return self.model(x)
+
+class MLPHuberModel:
+    """
+    Wrapper for the MLPHuber network, providing a scikit-learn-like interface.
+    """
+    def __init__(self, input_dim, hidden_dims=[128, 64], delta=1.0,
+                 lr=0.001, batch_size=32, epochs=100, device=None,
+                 early_stopping_patience=None, early_stopping_min_delta=0.0001):
+        """
+        Initializes the MLPHuberModel.
+
+        Args:
+            input_dim: Dimension of the input features.
+            hidden_dims: List of dimensions for hidden layers.
+            delta: The delta parameter for the Huber loss (epsilon in sklearn's HuberRegressor).
+            lr: Learning rate.
+            batch_size: Batch size for training.
+            epochs: Number of training epochs.
+            device: Device to train on ('cuda' or 'cpu').
+            early_stopping_patience: Number of epochs to wait for improvement before stopping.
+            early_stopping_min_delta: Minimum change in validation loss to be considered an improvement.
+        """
+        if device is None:
+            self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        else:
+            self.device = device
+            
+        self.input_dim = input_dim
+        self.hidden_dims = hidden_dims
+        self.delta = delta
+        self.lr = lr
+        self.batch_size = batch_size
+        self.epochs = epochs
+        self.early_stopping_patience = early_stopping_patience
+        self.early_stopping_min_delta = early_stopping_min_delta
+        
+        self.model = MLPHuber(input_dim, hidden_dims).to(self.device)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
+
+    def fit(self, X_train, y_train, X_val=None, y_val=None, verbose=1):
+        X_train_tensor = torch.FloatTensor(X_train).to(self.device)
+        y_train_tensor = torch.FloatTensor(y_train).unsqueeze(1).to(self.device)
+        
+        if X_val is not None and y_val is not None:
+            X_val_tensor = torch.FloatTensor(X_val).to(self.device)
+            y_val_tensor = torch.FloatTensor(y_val).unsqueeze(1).to(self.device)
+            best_val_loss = float('inf')
+            epochs_no_improve = 0
+            best_model_state = None
+        
+        start_training_time = time.time()
+
+        for epoch in range(self.epochs):
+            self.model.train()
+            permutation = torch.randperm(X_train_tensor.size()[0])
+            
+            epoch_train_loss = 0.0
+            num_batches = 0
+
+            for i in range(0, X_train_tensor.size()[0], self.batch_size):
+                self.optimizer.zero_grad()
+                indices = permutation[i:i+self.batch_size]
+                batch_X, batch_y = X_train_tensor[indices], y_train_tensor[indices]
+                
+                outputs = self.model(batch_X)
+                loss = huber_loss_fn(batch_y, outputs, self.delta) # Use Huber loss
+                
+                loss.backward()
+                self.optimizer.step()
+                epoch_train_loss += loss.item()
+                num_batches +=1
+            
+            avg_epoch_train_loss = epoch_train_loss / num_batches
+
+            if X_val is not None and y_val is not None:
+                self.model.eval()
+                with torch.no_grad():
+                    val_outputs = self.model(X_val_tensor)
+                    val_loss = huber_loss_fn(y_val_tensor, val_outputs, self.delta).item() # Use Huber loss
+                
+                if verbose and (epoch + 1) % 10 == 0 :
+                    print(f'Epoch {epoch+1}/{self.epochs}, Train Loss: {avg_epoch_train_loss:.4f}, Val Loss: {val_loss:.4f}')
+
+                if self.early_stopping_patience is not None and self.early_stopping_patience > 0:
+                    if val_loss < best_val_loss - self.early_stopping_min_delta:
+                        best_val_loss = val_loss
+                        epochs_no_improve = 0
+                        best_model_state = self.model.state_dict() 
+                    else:
+                        epochs_no_improve += 1
+                    
+                    if epochs_no_improve >= self.early_stopping_patience:
+                        if verbose:
+                            print(f'Early stopping triggered at epoch {epoch+1}. Best val loss: {best_val_loss:.4f}')
+                        if best_model_state is not None: # Load best model
+                            self.model.load_state_dict(best_model_state)
+                        break 
+            elif verbose and (epoch + 1) % 10 == 0:
+                 print(f'Epoch {epoch+1}/{self.epochs}, Train Loss: {avg_epoch_train_loss:.4f}')
+        
+        # If early stopping wasn't triggered or not enabled, but we did track best_model_state (because X_val was provided)
+        # ensure the best model is loaded if it was better than the final epoch's model.
+        if X_val is not None and y_val is not None and hasattr(self, 'early_stopping_patience') and self.early_stopping_patience is not None and self.early_stopping_patience > 0 and best_model_state is not None:
+             # Check if the loop finished naturally (not by break) but a better model was found
+            if epochs_no_improve < self.early_stopping_patience and val_loss >= best_val_loss : # type: ignore
+                 self.model.load_state_dict(best_model_state)
+                 if verbose:
+                    print(f'Finished training. Loaded best model state with val loss: {best_val_loss:.4f}')
+
+
+        end_training_time = time.time()
+        if verbose:
+            print(f"Training finished. Total time: {end_training_time - start_training_time:.2f}s")
+
+
+    def predict(self, X):
+        self.model.eval()
+        X_tensor = torch.FloatTensor(X).to(self.device)
+        with torch.no_grad():
+            predictions = self.model(X_tensor)
+        return predictions.cpu().numpy()
+
+    def get_params(self):
+        """获取模型参数，用于sklearn兼容性 (例如网格搜索)"""
+        return {
+            'input_dim': self.input_dim,
+            'hidden_dims': self.hidden_dims,
+            'delta': self.delta,
+            'lr': self.lr,
+            'batch_size': self.batch_size,
+            'epochs': self.epochs,
+            'device': self.device,
+            'early_stopping_patience': self.early_stopping_patience,
+            'early_stopping_min_delta': self.early_stopping_min_delta
+        }
+
+    def set_params(self, **params):
+        """
+        设置模型参数，并重新初始化模型和优化器
+        兼容sklearn的set_params，主要用于网格搜索等场景。
+        """
+        # 更新所有可设置的参数
+        for param, value in params.items():
+            setattr(self, param, value)
+        
+        # 重新初始化模型和优化器以反映新参数
+        # 注意: input_dim 通常不应在 set_params 中更改，因为它通常由数据集决定。
+        # 如果确实需要更改，需要确保外部代码正确处理了。
+        self.model = MLPHuber(self.input_dim, self.hidden_dims).to(self.device)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
         return self

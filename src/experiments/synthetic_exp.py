@@ -22,14 +22,12 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 DEFAULT_RESULTS_DIR = os.path.join(PROJECT_ROOT, 'results')
 
-from models.caar import CAARModel, MLPModel, GAARModel, MLPPinballModel
+from models.caar import CAARModel, MLPModel, GAARModel, MLPPinballModel, MLPHuberModel
 from models.baseline import (
     OLSRegressor, 
-    RidgeRegressor, 
     RandomForestRegressorWrapper,
     XGBoostRegressorWrapper
 )
-from models.robust import HuberRegressorWrapper
 from data.synthetic import prepare_synthetic_experiment
 from utils.metrics import evaluate_model
 from utils.visualization import (
@@ -95,10 +93,11 @@ def run_synthetic_linear_y_outliers_experiment(
     }
     caar_gaar_specific_params = {'latent_dim': 64}
     mlp_pinball_params = {'quantile': 0.5}
+    mlp_huber_params = {'delta': 1.35}
 
     models = {
         'OLS': OLSRegressor(),
-        'Huber': HuberRegressorWrapper(epsilon=1.35),
+        'MLP_Huber': MLPHuberModel(**nn_model_params, **mlp_huber_params),
         'RandomForest': RandomForestRegressorWrapper(n_estimators=100, random_state=random_state),
         'XGBoost': XGBoostRegressorWrapper(random_state=random_state),
         'CAAR': CAARModel(**nn_model_params, **caar_gaar_specific_params),
@@ -304,10 +303,11 @@ def run_synthetic_linear_x_outliers_experiment(
     }
     caar_gaar_specific_params = {'latent_dim': 64}
     mlp_pinball_params = {'quantile': 0.5}
+    mlp_huber_params = {'delta': 1.35}
 
     models = {
         'OLS': OLSRegressor(),
-        'Huber': HuberRegressorWrapper(epsilon=1.35),
+        'MLP_Huber': MLPHuberModel(**nn_model_params, **mlp_huber_params),
         'RandomForest': RandomForestRegressorWrapper(n_estimators=100, random_state=random_state),
         'XGBoost': XGBoostRegressorWrapper(random_state=random_state),
         'CAAR': CAARModel(**nn_model_params, **caar_gaar_specific_params),
@@ -514,10 +514,11 @@ def run_synthetic_nonlinear_y_outliers_experiment(
     }
     caar_gaar_specific_params_nonlinear = {'latent_dim': 128}
     mlp_pinball_params_nonlinear = {'quantile': 0.5}
+    mlp_huber_params_nonlinear = {'delta': 1.35}
 
     models = {
         'RandomForest': RandomForestRegressorWrapper(n_estimators=100, max_depth=None, random_state=random_state),
-        'Huber': HuberRegressorWrapper(epsilon=1.35),
+        'MLP_Huber': MLPHuberModel(**nn_model_params_nonlinear, **mlp_huber_params_nonlinear),
         'XGBoost': XGBoostRegressorWrapper(random_state=random_state),
         'CAAR': CAARModel(**nn_model_params_nonlinear, **caar_gaar_specific_params_nonlinear),
         'MLP': MLPModel(**nn_model_params_nonlinear),
