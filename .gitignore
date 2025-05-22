@@ -4,3 +4,7 @@ results/
 data/
 !src/data/
 
+
+*.pyc
+__pycache__/
+
