@@ -22,7 +22,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 DEFAULT_RESULTS_DIR = os.path.join(PROJECT_ROOT, 'results')
 
-from models.caar import CAARModel, MLPModel, GAARModel, MLPPinballModel, MLPHuberModel
+from models.caar import CAARModel, MLPModel, GAARModel, MLPPinballModel, MLPHuberModel, MLPCauchyModel
 from models.baseline import (
     OLSRegressor, 
     RandomForestRegressorWrapper,
@@ -48,7 +48,8 @@ def run_synthetic_linear_y_outliers_experiment(
     n_repeats=5,
     random_state=42,
     results_dir=DEFAULT_RESULTS_DIR,
-    nn_early_stopping_patience=10
+    nn_early_stopping_patience=10,
+    noise_level_linear=0.5
 ):
     """
     执行线性关系 + 不同比例Y异常值实验
@@ -63,6 +64,7 @@ def run_synthetic_linear_y_outliers_experiment(
         random_state: 随机种子
         results_dir: 结果保存目录
         nn_early_stopping_patience: 神经网络模型早停的耐心轮数
+        noise_level_linear: 线性关系的基础噪声水平
         
     返回:
         results: 实验结果字典
@@ -103,7 +105,8 @@ def run_synthetic_linear_y_outliers_experiment(
         'CAAR': CAARModel(**nn_model_params, **caar_gaar_specific_params),
         'MLP': MLPModel(**nn_model_params),
         'GAAR': GAARModel(**nn_model_params, **caar_gaar_specific_params),
-        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params, **mlp_pinball_params)
+        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params, **mlp_pinball_params),
+        'MLP_Cauchy': MLPCauchyModel(**nn_model_params)
     }
     
     # 为每个异常值比例初始化结果
@@ -126,14 +129,15 @@ def run_synthetic_linear_y_outliers_experiment(
             
             current_seed = random_state + repeat
             X_train, X_val, X_test, y_train, y_val, y_test, outlier_mask_train, outlier_mask_val = prepare_synthetic_experiment(
-                n_samples=n_samples,
+                n_samples_total=n_samples,
                 n_features=n_features,
                 outlier_ratio=ratio,
                 outlier_strength=outlier_strength,
                 outlier_type='y',
                 relation_type='linear',
                 y_outlier_method=y_outlier_method,
-                random_state=current_seed
+                random_state=current_seed,
+                noise_level_linear=noise_level_linear
             )
             
             for model_name, model_instance in models.items():
@@ -258,7 +262,8 @@ def run_synthetic_linear_x_outliers_experiment(
     n_repeats=5,
     random_state=42,
     results_dir=DEFAULT_RESULTS_DIR,
-    nn_early_stopping_patience=10
+    nn_early_stopping_patience=10,
+    noise_level_linear=0.5
 ):
     """
     执行线性关系 + 不同比例X异常值实验
@@ -272,6 +277,7 @@ def run_synthetic_linear_x_outliers_experiment(
         random_state: 随机种子
         results_dir: 结果保存目录
         nn_early_stopping_patience: 神经网络模型早停的耐心轮数
+        noise_level_linear: 线性关系的基础噪声水平
         
     返回:
         results: 实验结果字典
@@ -313,7 +319,8 @@ def run_synthetic_linear_x_outliers_experiment(
         'CAAR': CAARModel(**nn_model_params, **caar_gaar_specific_params),
         'MLP': MLPModel(**nn_model_params),
         'GAAR': GAARModel(**nn_model_params, **caar_gaar_specific_params),
-        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params, **mlp_pinball_params)
+        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params, **mlp_pinball_params),
+        'MLP_Cauchy': MLPCauchyModel(**nn_model_params)
     }
     
     # 为每个异常值比例初始化结果
@@ -336,13 +343,14 @@ def run_synthetic_linear_x_outliers_experiment(
             
             current_seed = random_state + repeat
             X_train, X_val, X_test, y_train, y_val, y_test, outlier_mask_train, outlier_mask_val = prepare_synthetic_experiment(
-                n_samples=n_samples,
+                n_samples_total=n_samples,
                 n_features=n_features,
                 outlier_ratio=ratio,
                 outlier_strength=outlier_strength,
                 outlier_type='x',
                 relation_type='linear',
-                random_state=current_seed
+                random_state=current_seed,
+                noise_level_linear=noise_level_linear
             )
             
             for model_name, model_instance in models.items():
@@ -469,7 +477,12 @@ def run_synthetic_nonlinear_y_outliers_experiment(
     n_repeats=5,
     random_state=42,
     results_dir=DEFAULT_RESULTS_DIR,
-    nn_early_stopping_patience=10
+    nn_early_stopping_patience=10,
+    noise_level_nonlinear=0.5,
+    n_interaction_terms=3,
+    interaction_strength=0.5,
+    hetero_strength=0.5,
+    main_effect_strength=1.0
 ):
     """
     执行非线性关系 + 不同比例Y异常值实验
@@ -485,6 +498,11 @@ def run_synthetic_nonlinear_y_outliers_experiment(
         random_state: 随机种子
         results_dir: 结果保存目录
         nn_early_stopping_patience: 神经网络模型早停的耐心轮数
+        noise_level_nonlinear: 非线性关系的基础噪声水平
+        n_interaction_terms: (for 'interactive_heteroscedastic')
+        interaction_strength: (for 'interactive_heteroscedastic')
+        hetero_strength: (for 'interactive_heteroscedastic')
+        main_effect_strength: (for 'interactive_heteroscedastic')
         
     返回:
         results: 实验结果字典
@@ -523,7 +541,8 @@ def run_synthetic_nonlinear_y_outliers_experiment(
         'CAAR': CAARModel(**nn_model_params_nonlinear, **caar_gaar_specific_params_nonlinear),
         'MLP': MLPModel(**nn_model_params_nonlinear),
         'GAAR': GAARModel(**nn_model_params_nonlinear, **caar_gaar_specific_params_nonlinear),
-        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params_nonlinear, **mlp_pinball_params_nonlinear)
+        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params_nonlinear, **mlp_pinball_params_nonlinear),
+        'MLP_Cauchy': MLPCauchyModel(**nn_model_params_nonlinear)
     }
     
     # 为每个异常值比例初始化结果
@@ -546,14 +565,19 @@ def run_synthetic_nonlinear_y_outliers_experiment(
             
             current_seed = random_state + repeat
             X_train, X_val, X_test, y_train, y_val, y_test, outlier_mask_train, outlier_mask_val = prepare_synthetic_experiment(
-                n_samples=n_samples,
+                n_samples_total=n_samples,
                 n_features=n_features,
                 outlier_ratio=ratio,
                 outlier_strength=outlier_strength,
                 outlier_type='y',
                 relation_type=relation_type,
                 y_outlier_method=y_outlier_method,
-                random_state=current_seed
+                random_state=current_seed,
+                noise_level_nonlinear=noise_level_nonlinear,
+                n_interaction_terms=n_interaction_terms,
+                interaction_strength=interaction_strength,
+                hetero_strength=hetero_strength,
+                main_effect_strength=main_effect_strength
             )
             
             for model_name, model_instance in models.items():
@@ -672,7 +696,7 @@ def run_synthetic_nonlinear_y_outliers_experiment(
 
 def run_all_synthetic_experiments(
     outlier_ratios=[0.0, 0.05, 0.1, 0.2],
-    n_samples=500,
+    n_samples_total=500,
     n_features=5,
     n_repeats=3,
     random_state=42,
@@ -680,14 +704,16 @@ def run_all_synthetic_experiments(
     nn_early_stopping_patience=10,
     outlier_strength=5.0,
     y_outlier_method='additive_std',
-    nonlinear_relation_type='polynomial'
+    nonlinear_relation_type='polynomial',
+    noise_level_linear=0.5,
+    noise_level_nonlinear=0.5
 ):
     """
     执行所有合成数据实验
     
     参数:
         outlier_ratios: 异常值比例列表
-        n_samples: 样本数量
+        n_samples_total: 样本数量
         n_features: 特征数量
         n_repeats: 重复次数
         random_state: 随机种子
@@ -696,6 +722,8 @@ def run_all_synthetic_experiments(
         outlier_strength: 异常值强度 (用于Y轴异常)
         y_outlier_method: Y轴异常值注入方法
         nonlinear_relation_type: 用于非线性Y轴异常实验的关系类型
+        noise_level_linear: 线性关系中的噪声水平
+        noise_level_nonlinear: 非线性关系中的噪声水平
         
     返回:
         all_results: 所有实验结果字典
@@ -706,32 +734,7 @@ def run_all_synthetic_experiments(
     # 执行线性关系 + Y异常值实验
     linear_y_results = run_synthetic_linear_y_outliers_experiment(
         outlier_ratios=outlier_ratios,
-        n_samples=n_samples,
-        n_features=n_features,
-        n_repeats=n_repeats,
-        random_state=random_state,
-        results_dir=results_dir,
-        nn_early_stopping_patience=nn_early_stopping_patience,
-        outlier_strength=outlier_strength,
-        y_outlier_method=y_outlier_method
-    )
-    
-    # 执行线性关系 + X异常值实验
-    # linear_x_results = run_synthetic_linear_x_outliers_experiment(
-    #     outlier_ratios=outlier_ratios,
-    #     n_samples=n_samples,
-    #     n_features=n_features,
-    #     n_repeats=n_repeats,
-    #     random_state=random_state,
-    #     results_dir=results_dir,
-    #     nn_early_stopping_patience=nn_early_stopping_patience,
-    #     outlier_strength=outlier_strength # X轴异常也使用同样的strength，如果需要分开可以再加参数
-    # )
-    
-    # 执行非线性关系 + Y异常值实验
-    nonlinear_y_results = run_synthetic_nonlinear_y_outliers_experiment(
-        outlier_ratios=outlier_ratios,
-        n_samples=n_samples,
+        n_samples=n_samples_total,
         n_features=n_features,
         n_repeats=n_repeats,
         random_state=random_state,
@@ -739,13 +742,40 @@ def run_all_synthetic_experiments(
         nn_early_stopping_patience=nn_early_stopping_patience,
         outlier_strength=outlier_strength,
         y_outlier_method=y_outlier_method,
-        relation_type=nonlinear_relation_type
+        noise_level_linear=noise_level_linear
+    )
+    
+    # 执行线性关系 + X异常值实验
+    # linear_x_results = run_synthetic_linear_x_outliers_experiment(
+    #     outlier_ratios=outlier_ratios,
+    #     n_samples=n_samples_total,
+    #     n_features=n_features,
+    #     n_repeats=n_repeats,
+    #     random_state=random_state,
+    #     results_dir=results_dir,
+    #     nn_early_stopping_patience=nn_early_stopping_patience,
+    #     outlier_strength=outlier_strength
+    # )
+    
+    # 执行非线性关系 + Y异常值实验
+    nonlinear_y_results = run_synthetic_nonlinear_y_outliers_experiment(
+        outlier_ratios=outlier_ratios,
+        n_samples=n_samples_total,
+        n_features=n_features,
+        n_repeats=n_repeats,
+        random_state=random_state,
+        results_dir=results_dir,
+        nn_early_stopping_patience=nn_early_stopping_patience,
+        outlier_strength=outlier_strength,
+        y_outlier_method=y_outlier_method,
+        relation_type=nonlinear_relation_type,
+        noise_level_nonlinear=noise_level_nonlinear
     )
     
     # 汇总所有结果
     all_results = {
         'linear_y': linear_y_results,
-        # 'linear_x': linear_x_results, # 注释掉
+        # 'linear_x': linear_x_results,
         'nonlinear_y': nonlinear_y_results
     }
     
@@ -759,13 +789,15 @@ if __name__ == "__main__":
     # 执行所有合成数据实验
     run_all_synthetic_experiments(
         outlier_ratios=[0.0, 0.1, 0.2],
-        n_samples=5000,
+        n_samples_total=5000,
         n_features=100,
-        n_repeats=3,
+        n_repeats=1,
         random_state=42,
         results_dir=DEFAULT_RESULTS_DIR,
         nn_early_stopping_patience=10,
         outlier_strength=5.0,
         y_outlier_method='sequential_multiplicative_additive',
-        nonlinear_relation_type='interactive_heteroscedastic'
+        nonlinear_relation_type='interactive_heteroscedastic',
+        noise_level_linear=2.0,
+        noise_level_nonlinear=0.5
     )

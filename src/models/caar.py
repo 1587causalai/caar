@@ -1132,3 +1132,183 @@ class MLPHuberModel:
         self.model = MLPHuber(self.input_dim, self.hidden_dims).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
         return self
+
+# Cauchy Loss Function
+def cauchy_loss_fn(y_true, y_pred):
+    """
+    Computes the Cauchy loss (negative log-likelihood of Cauchy distribution, ignoring constants).
+    Loss = log(1 + (y_true - y_pred)^2)
+
+    Parameters:
+        y_true: Ground truth values.
+        y_pred: Predicted values.
+
+    Returns:
+        The mean Cauchy loss.
+    """
+    error_sq = (y_true - y_pred)**2
+    loss = torch.log(1 + error_sq)
+    return torch.mean(loss)
+
+class MLPCauchy(nn.Module):
+    """
+    MLP for Cauchy Regression. Structure is identical to the standard MLP.
+    The Cauchy loss will be applied in the wrapper model.
+    """
+    def __init__(self, input_dim, hidden_dims=[128, 64]):
+        super(MLPCauchy, self).__init__()
+        layers = []
+        prev_dim = input_dim
+        for hidden_dim in hidden_dims:
+            layers.append(nn.Linear(prev_dim, hidden_dim))
+            layers.append(nn.ReLU())
+            prev_dim = hidden_dim
+        layers.append(nn.Linear(prev_dim, 1)) # Output a single value for regression
+        
+        self.network = nn.Sequential(*layers)
+        self.input_dim = input_dim
+        self.hidden_dims = hidden_dims
+
+    def forward(self, x):
+        return self.network(x)
+
+class MLPCauchyModel:
+    """
+    Wrapper for the MLPCauchy network, using Cauchy loss.
+    """
+    def __init__(self, input_dim, hidden_dims=[128, 64],
+                 lr=0.001, batch_size=32, epochs=100, device=None,
+                 early_stopping_patience=None, early_stopping_min_delta=0.0001):
+        if device is None:
+            self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        else:
+            self.device = device
+            
+        self.input_dim = input_dim
+        self.hidden_dims = hidden_dims
+        self.lr = lr
+        self.batch_size = batch_size
+        self.epochs = epochs
+        self.early_stopping_patience = early_stopping_patience
+        self.early_stopping_min_delta = early_stopping_min_delta
+        
+        self.model = MLPCauchy(input_dim, hidden_dims).to(self.device)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
+        self.loss_fn = cauchy_loss_fn
+
+        self.history = {
+            'train_loss': [],
+            'val_loss': [],
+            'train_time': 0,
+            'best_epoch': 0
+        }
+
+    def fit(self, X_train, y_train, X_val=None, y_val=None, verbose=1):
+        X_train_tensor = torch.FloatTensor(X_train).to(self.device)
+        y_train_tensor = torch.FloatTensor(y_train).reshape(-1, 1).to(self.device)
+
+        best_val_loss = float('inf')
+        patience_counter = 0
+        best_model_state_dict = None
+        final_epoch = self.epochs
+        
+        has_validation = False
+        if X_val is not None and y_val is not None:
+            X_val_tensor = torch.FloatTensor(X_val).to(self.device)
+            y_val_tensor = torch.FloatTensor(y_val).reshape(-1, 1).to(self.device)
+            has_validation = True
+        else:
+            self.early_stopping_patience = None 
+        
+        train_dataset = torch.utils.data.TensorDataset(X_train_tensor, y_train_tensor)
+        train_loader = torch.utils.data.DataLoader(
+            train_dataset, batch_size=self.batch_size, shuffle=True
+        )
+        
+        start_time = time.time()
+        
+        for epoch in range(self.epochs):
+            self.model.train()
+            epoch_train_loss = 0
+            for batch_X, batch_y in train_loader:
+                y_pred = self.model(batch_X)
+                loss = self.loss_fn(batch_y, y_pred)
+                self.optimizer.zero_grad()
+                loss.backward()
+                self.optimizer.step()
+                epoch_train_loss += loss.item()
+            
+            avg_train_loss = epoch_train_loss / len(train_loader)
+            self.history['train_loss'].append(avg_train_loss)
+            
+            current_val_loss = float('inf')
+            if has_validation:
+                self.model.eval()
+                with torch.no_grad():
+                    y_val_pred = self.model(X_val_tensor)
+                    current_val_loss = self.loss_fn(y_val_tensor, y_val_pred).item()
+                self.history['val_loss'].append(current_val_loss)
+                
+                if verbose and (epoch + 1) % (self.epochs // 10 if self.epochs >= 10 else 1) == 0:
+                    print(f'MLP Cauchy Epoch {epoch+1}/{self.epochs}, Train Loss: {avg_train_loss:.4f}, Val Loss: {current_val_loss:.4f}')
+
+                if self.early_stopping_patience is not None and self.early_stopping_patience > 0:
+                    if current_val_loss < best_val_loss - self.early_stopping_min_delta:
+                        best_val_loss = current_val_loss
+                        patience_counter = 0
+                        best_model_state_dict = self.model.state_dict().copy()
+                        self.history['best_epoch'] = epoch + 1
+                    else:
+                        patience_counter += 1
+                    
+                    if patience_counter >= self.early_stopping_patience:
+                        if verbose:
+                            print(f'Early stopping triggered for MLP Cauchy at epoch {epoch+1}.')
+                        final_epoch = epoch + 1
+                        break 
+            else:
+                if verbose and (epoch + 1) % (self.epochs // 10 if self.epochs >= 10 else 1) == 0:
+                    print(f'MLP Cauchy Epoch {epoch+1}/{self.epochs}, Train Loss: {avg_train_loss:.4f}')
+            final_epoch = epoch + 1 
+            
+        self.history['train_time'] = time.time() - start_time
+        if best_model_state_dict is not None:
+            self.model.load_state_dict(best_model_state_dict)
+            if verbose:
+                print(f'MLP Cauchy loaded best model state from epoch {self.history["best_epoch"]} with validation loss: {best_val_loss:.4f}')
+        
+        if verbose:
+            print(f'MLP Cauchy Training completed in {self.history["train_time"]:.2f} seconds. Final epoch: {final_epoch}')
+        return self
+    
+    def predict(self, X):
+        X_tensor = torch.FloatTensor(X).to(self.device)
+        self.model.eval()
+        with torch.no_grad():
+            y_pred = self.model(X_tensor).cpu().numpy()
+        return y_pred.flatten()
+
+    def get_params(self):
+        return {
+            'input_dim': self.input_dim,
+            'hidden_dims': self.hidden_dims,
+            'lr': self.lr,
+            'batch_size': self.batch_size,
+            'epochs': self.epochs,
+            'device': str(self.device), # Store device as string for easier serialization if needed
+            'early_stopping_patience': self.early_stopping_patience,
+            'early_stopping_min_delta': self.early_stopping_min_delta
+        }
+
+    def set_params(self, **params):
+        for param, value in params.items():
+            setattr(self, param, value)
+        
+        # Re-initialize model and optimizer if relevant params changed
+        # Device needs to be converted back to torch.device if passed as string
+        if 'device' in params and isinstance(params['device'], str):
+            self.device = torch.device(params['device'])
+            
+        self.model = MLPCauchy(self.input_dim, self.hidden_dims).to(self.device)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
+        return self

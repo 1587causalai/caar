@@ -20,7 +20,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 DEFAULT_RESULTS_DIR = os.path.join(PROJECT_ROOT, 'results')
 
-from models.caar import CAARModel, MLPModel, GAARModel, MLPPinballModel, MLPHuberModel
+from models.caar import CAARModel, MLPModel, GAARModel, MLPPinballModel, MLPHuberModel, MLPCauchyModel
 from models.baseline import (
     OLSRegressor, 
     RidgeRegressor, 
@@ -94,6 +94,7 @@ def run_real_data_experiment(
         'MLP': None,
         'MLP_Huber': None, # Placeholder for MLPHuberModel
         'MLP_Pinball_Median': None, # Added MLP Pinball Median placeholder
+        'MLP_Cauchy': None, # Placeholder for MLPCauchyModel
         'GAAR': None,
         'CAAR': None
     }
@@ -151,6 +152,8 @@ def run_real_data_experiment(
                 models['MLP_Pinball_Median'] = MLPPinballModel(**nn_model_params, **mlp_pinball_params) # type: ignore
             if models['MLP_Huber'] is None or not hasattr(models['MLP_Huber'], 'model') or models['MLP_Huber'].model.input_dim != input_dim: # type: ignore
                 models['MLP_Huber'] = MLPHuberModel(**nn_model_params, **mlp_huber_params) # type: ignore
+            if models['MLP_Cauchy'] is None or not hasattr(models['MLP_Cauchy'], 'model') or models['MLP_Cauchy'].model.input_dim != input_dim: # type: ignore
+                models['MLP_Cauchy'] = MLPCauchyModel(**nn_model_params) # type: ignore
             
             for model_name, model in models.items():
                 print(f"    训练模型: {model_name}")
@@ -367,7 +370,7 @@ def run_all_real_data_experiments(
 if __name__ == "__main__":
     run_all_real_data_experiments(
     outlier_ratios=[0.0, 0.1, 0.2], # [0.0, 0.05, 0.1, 0.2], 
-    n_repeats=3,
+    n_repeats=5,
     random_state=42,
     results_dir=DEFAULT_RESULTS_DIR,
     nn_early_stopping_patience=10,
