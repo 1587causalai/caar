@@ -13,6 +13,7 @@ import os
 import pickle
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import torch
 
 # 导入自定义模块
 import sys
@@ -112,6 +113,10 @@ def run_real_data_experiment(
     # 对每个异常值比例进行实验
     for ratio in outlier_ratios:
         print(f"\n异常值比例: {ratio}")
+
+        # Determine device for PyTorch models
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        print(f"Using device: {device}")
         
         # 重复实验多次以获得统计可靠性
         for repeat in range(n_repeats):
@@ -135,7 +140,8 @@ def run_real_data_experiment(
                 'lr': 0.001, 
                 'batch_size': 32,
                 'early_stopping_patience': nn_early_stopping_patience,
-                'early_stopping_min_delta': 0.0001
+                'early_stopping_min_delta': 0.0001,
+                'device': device  # Add this line
             }
             caar_gaar_specific_params = {'latent_dim': 64}
             mlp_pinball_params = {'quantile': 0.5} # For Median Regression
