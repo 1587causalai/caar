@@ -84,29 +84,32 @@ def run_synthetic_linear_y_outliers_experiment(
     }
     
     # 定义神经网络和CAAR/GAAR特定参数，n_features即input_dim
-    nn_model_params = {
+    nn_model_params_base = { # 参数基础，不含 abduction_type，供所有模型使用
         'input_dim': n_features, 
-        'hidden_dims': [128, 64], 
+        'feature_hidden_dims': [64],
+        'representation_dim': 64,   
+        'abduction_hidden_dims': [128, 64], 
+        'latent_dim': 64, 
         'epochs': 100, 
         'lr': 0.001, 
         'batch_size': 32,
         'early_stopping_patience': nn_early_stopping_patience,
         'early_stopping_min_delta': 0.0001
     }
-    caar_gaar_specific_params = {'latent_dim': 64}
+    
     mlp_pinball_params = {'quantile': 0.5}
     mlp_huber_params = {'delta': 1.35}
 
     models = {
         'OLS': OLSRegressor(),
-        'MLP_Huber': MLPHuberModel(**nn_model_params, **mlp_huber_params),
+        'MLP_Huber': MLPHuberModel(**nn_model_params_base, **mlp_huber_params),
         'RandomForest': RandomForestRegressorWrapper(n_estimators=100, random_state=random_state),
         'XGBoost': XGBoostRegressorWrapper(random_state=random_state),
-        'CAAR': CAARModel(**nn_model_params, **caar_gaar_specific_params),
-        'MLP': MLPModel(**nn_model_params),
-        'GAAR': GAARModel(**nn_model_params, **caar_gaar_specific_params),
-        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params, **mlp_pinball_params),
-        'MLP_Cauchy': MLPCauchyModel(**nn_model_params)
+        'CAAR': CAARModel(**nn_model_params_base),
+        'MLP': MLPModel(**nn_model_params_base),
+        'GAAR': GAARModel(**nn_model_params_base),
+        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params_base, **mlp_pinball_params),
+        'MLP_Cauchy': MLPCauchyModel(**nn_model_params_base)
     }
     
     # 为每个异常值比例初始化结果
@@ -298,29 +301,32 @@ def run_synthetic_linear_x_outliers_experiment(
     }
     
     # 定义神经网络和CAAR/GAAR特定参数，n_features即input_dim
-    nn_model_params = {
+    nn_model_params_base = { # 参数基础，不含 abduction_type，供所有模型使用
         'input_dim': n_features, 
-        'hidden_dims': [128, 64], 
+        'feature_hidden_dims': [64],
+        'representation_dim': 64,   
+        'abduction_hidden_dims': [128, 64], 
+        'latent_dim': 64, 
         'epochs': 100, 
         'lr': 0.001, 
         'batch_size': 32,
         'early_stopping_patience': nn_early_stopping_patience,
         'early_stopping_min_delta': 0.0001
     }
-    caar_gaar_specific_params = {'latent_dim': 64}
+    
     mlp_pinball_params = {'quantile': 0.5}
     mlp_huber_params = {'delta': 1.35}
 
     models = {
         'OLS': OLSRegressor(),
-        'MLP_Huber': MLPHuberModel(**nn_model_params, **mlp_huber_params),
+        'MLP_Huber': MLPHuberModel(**nn_model_params_base, **mlp_huber_params),
         'RandomForest': RandomForestRegressorWrapper(n_estimators=100, random_state=random_state),
         'XGBoost': XGBoostRegressorWrapper(random_state=random_state),
-        'CAAR': CAARModel(**nn_model_params, **caar_gaar_specific_params),
-        'MLP': MLPModel(**nn_model_params),
-        'GAAR': GAARModel(**nn_model_params, **caar_gaar_specific_params),
-        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params, **mlp_pinball_params),
-        'MLP_Cauchy': MLPCauchyModel(**nn_model_params)
+        'CAAR': CAARModel(**nn_model_params_base),
+        'MLP': MLPModel(**nn_model_params_base),
+        'GAAR': GAARModel(**nn_model_params_base),
+        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params_base, **mlp_pinball_params),
+        'MLP_Cauchy': MLPCauchyModel(**nn_model_params_base)
     }
     
     # 为每个异常值比例初始化结果
@@ -521,28 +527,31 @@ def run_synthetic_nonlinear_y_outliers_experiment(
     }
     
     # 定义神经网络和CAAR/GAAR特定参数，n_features即input_dim
-    nn_model_params_nonlinear = {
+    nn_model_params_base_nonlinear = { # 参数基础，不含 abduction_type，供所有模型使用
         'input_dim': n_features, 
-        'hidden_dims': [256, 128],
+        'feature_hidden_dims': [128],
+        'representation_dim': 128,  
+        'abduction_hidden_dims': [256, 128],
+        'latent_dim': 128,
         'epochs': 150,
         'lr': 0.001, 
         'batch_size': 32,
         'early_stopping_patience': nn_early_stopping_patience,
         'early_stopping_min_delta': 0.0001
     }
-    caar_gaar_specific_params_nonlinear = {'latent_dim': 128}
+    
     mlp_pinball_params_nonlinear = {'quantile': 0.5}
     mlp_huber_params_nonlinear = {'delta': 1.35}
 
     models = {
         'RandomForest': RandomForestRegressorWrapper(n_estimators=100, max_depth=None, random_state=random_state),
-        'MLP_Huber': MLPHuberModel(**nn_model_params_nonlinear, **mlp_huber_params_nonlinear),
+        'MLP_Huber': MLPHuberModel(**nn_model_params_base_nonlinear, **mlp_huber_params_nonlinear),
         'XGBoost': XGBoostRegressorWrapper(random_state=random_state),
-        'CAAR': CAARModel(**nn_model_params_nonlinear, **caar_gaar_specific_params_nonlinear),
-        'MLP': MLPModel(**nn_model_params_nonlinear),
-        'GAAR': GAARModel(**nn_model_params_nonlinear, **caar_gaar_specific_params_nonlinear),
-        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params_nonlinear, **mlp_pinball_params_nonlinear),
-        'MLP_Cauchy': MLPCauchyModel(**nn_model_params_nonlinear)
+        'CAAR': CAARModel(**nn_model_params_base_nonlinear),
+        'MLP': MLPModel(**nn_model_params_base_nonlinear),
+        'GAAR': GAARModel(**nn_model_params_base_nonlinear),
+        'MLP_Pinball_Median': MLPPinballModel(**nn_model_params_base_nonlinear, **mlp_pinball_params_nonlinear),
+        'MLP_Cauchy': MLPCauchyModel(**nn_model_params_base_nonlinear)
     }
     
     # 为每个异常值比例初始化结果
