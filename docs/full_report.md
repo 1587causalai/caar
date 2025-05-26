@@ -210,7 +210,7 @@ L = -∑ log[1/(π*γ_y_i * (1 + ((y_i - μ_y_i)/γ_y_i)²))]
 
 随着异常值比例的增加，各模型的RMSE变化趋势：
 
-![线性关系 + Y异常值 RMSE趋势图](../results/synthetic_linear_y_outliers/trend_RMSE.png)
+![线性关系 + Y异常值 RMSE趋势图](results/synthetic_linear_y_outliers/trend_RMSE.png)
 
 **结论**：在存在Y异常值的线性关系数据中，CAAR模型表现出优异的鲁棒性，随着异常值比例的增加，其性能下降幅度明显小于OLS等非鲁棒方法，且在高异常值比例下优于Huber和RANSAC等传统鲁棒方法。
 
@@ -227,7 +227,7 @@ L = -∑ log[1/(π*γ_y_i * (1 + ((y_i - μ_y_i)/γ_y_i)²))]
 
 随着异常值比例的增加，各模型的RMSE变化趋势：
 
-![线性关系 + X异常值 RMSE趋势图](../results/synthetic_linear_x_outliers/trend_RMSE.png)
+![线性关系 + X异常值 RMSE趋势图](results/synthetic_linear_x_outliers/trend_RMSE.png)
 
 **结论**：在存在X异常值的线性关系数据中，CAAR模型同样表现出色，特别是在处理杠杆点（高影响力的异常点）时，其性能优势更为明显。这表明CAAR模型能够有效识别和降低异常特征点的影响。
 
@@ -244,7 +244,7 @@ L = -∑ log[1/(π*γ_y_i * (1 + ((y_i - μ_y_i)/γ_y_i)²))]
 
 随着异常值比例的增加，各模型的RMSE变化趋势：
 
-![非线性关系 + Y异常值 RMSE趋势图](../results/synthetic_nonlinear_y_outliers/trend_RMSE.png)
+![非线性关系 + Y异常值 RMSE趋势图](results/synthetic_nonlinear_y_outliers/trend_RMSE.png)
 
 **结论**：在非线性关系数据中，CAAR模型展现出与随机森林相当甚至更好的性能，同时保持了对异常值的鲁棒性。这表明CAAR模型不仅适用于线性关系，在复杂的非线性关系中同样能够有效工作。
 

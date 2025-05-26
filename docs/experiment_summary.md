@@ -47,7 +47,7 @@
 
 随着异常值比例的增加，各模型的RMSE变化趋势：
 
-![线性关系 + Y异常值 RMSE趋势图](../results/synthetic_linear_y_outliers/trend_RMSE.png)
+![线性关系 + Y异常值 RMSE趋势图](results/synthetic_linear_y_outliers/trend_RMSE.png)
 
 **结论**：在线性关系数据中注入不同比例的Y异常值（目标变量异常）后，根据各模型在干净测试集上的平均性能指标，CAAR模型的MSE (0.3678), RMSE (0.6056), 和 MAE (0.474) 高于Huber (MSE 0.2453, RMSE 0.4952, MAE 0.3953) 和 RANSAC (MSE 0.2712, RMSE 0.5206, MAE 0.4167)。CAAR的MdAE (0.4013) 优于OLS (0.4181) 但劣于Huber (0.3571) 和RANSAC (0.3607)。R² (0.9051) 也低于Huber (0.9366) 和RANSAC (0.9294)。下面的趋势图据称展示了不同异常值比例下的具体表现，可能在高异常值比例下CAAR有优势。
 
@@ -64,7 +64,7 @@
 
 随着异常值比例的增加，各模型的RMSE变化趋势：
 
-![线性关系 + X异常值 RMSE趋势图](../results/synthetic_linear_x_outliers/trend_RMSE.png)
+![线性关系 + X异常值 RMSE趋势图](results/synthetic_linear_x_outliers/trend_RMSE.png)
 
 **结论**：在线性关系数据中注入不同比例的X异常值（特征空间异常/杠杆点）后，根据平均性能指标，CAAR模型的MSE (0.4116), RMSE (0.6399), 和 MAE (0.5072) 高于Huber (MSE 0.3666, RMSE 0.5908, MAE 0.4724) 和 RANSAC (MSE 0.3078, RMSE 0.5536, MAE 0.4421)。CAAR的MdAE (0.427) 优于OLS (0.5544)，与Huber (0.4249) 表现接近，但劣于RANSAC (0.3718)。R² (0.8939) 也低于Huber (0.9059) 和RANSAC (0.919)。报告中提及的趋势图可能进一步揭示其在处理杠杆点时的具体表现。
 
@@ -81,7 +81,7 @@
 
 随着异常值比例的增加，各模型的RMSE变化趋势：
 
-![非线性关系 + Y异常值 RMSE趋势图](../results/synthetic_nonlinear_y_outliers/trend_RMSE.png)
+![非线性关系 + Y异常值 RMSE趋势图](results/synthetic_nonlinear_y_outliers/trend_RMSE.png)
 
 **结论**：在非线性关系数据中注入不同比例的Y异常值后，CAAR模型在各项平均性能指标上均表现突出。其MSE (0.5585), RMSE (0.7451), MAE (0.5634), 和 MdAE (0.4286) 均显著优于RandomForest (MSE 4.9215, RMSE 2.1761, MAE 1.5814, MdAE 1.1348), Huber, 及RANSAC。CAAR的R² (0.9427) 也远高于其他对比方法。这表明CAAR模型在存在Y异常值的非线性场景下具有强大的预测能力和鲁棒性。
 
