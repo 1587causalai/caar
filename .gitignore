@@ -1,5 +1,3 @@
-results/
-
 # 根目录下 data 文件夹, src/data 是需要的、
 data/
 !src/data/

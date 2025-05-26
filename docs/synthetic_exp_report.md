@@ -126,16 +126,16 @@
 *   **训练时间：** CAAR (**1.11s**) 的训练时间比 MLP_Cauchy (0.61s), MLP_Pinball_Median (0.45s) 和 MLP_Huber (0.49s) 略长，但仍在合理范围内。
 
 **相关图表 (线性关系 - Y轴异常):**
-*   MSE 性能对比: ![MSE Performance Comparison](results/synthetic_linear_y_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/synthetic_linear_y_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/synthetic_linear_y_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/synthetic_linear_y_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/synthetic_linear_y_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/synthetic_linear_y_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/synthetic_linear_y_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/synthetic_linear_y_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/synthetic_linear_y_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/synthetic_linear_y_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/synthetic_linear_y_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/synthetic_linear_y_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/synthetic_linear_y_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/synthetic_linear_y_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/synthetic_linear_y_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/synthetic_linear_y_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/synthetic_linear_y_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/synthetic_linear_y_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/synthetic_linear_y_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/synthetic_linear_y_outliers/trend_R².png)
 
 ### 4.2 非线性关系 ('interactive_heteroscedastic') - Y轴异常
 
@@ -164,16 +164,16 @@
 *   **MLP和GAAR失效。**
 
 **相关图表 (非线性关系 - Y轴异常):**
-*   MSE 性能对比: ![MSE Performance Comparison](results/synthetic_nonlinear_y_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/synthetic_nonlinear_y_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/synthetic_nonlinear_y_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/synthetic_nonlinear_y_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/synthetic_nonlinear_y_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/synthetic_nonlinear_y_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/synthetic_nonlinear_y_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/synthetic_nonlinear_y_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/synthetic_nonlinear_y_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/synthetic_nonlinear_y_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/synthetic_nonlinear_y_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/synthetic_nonlinear_y_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/synthetic_nonlinear_y_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/synthetic_nonlinear_y_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/synthetic_nonlinear_y_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/synthetic_nonlinear_y_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/synthetic_nonlinear_y_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/synthetic_nonlinear_y_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/synthetic_nonlinear_y_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/synthetic_nonlinear_y_outliers/trend_R².png)
 
 ## 5. 初步结论与展望
 

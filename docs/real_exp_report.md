@@ -165,16 +165,16 @@
 *   **训练效率：** MLP_Cauchy (**2.28s**) 的训练时间与 MLP_Pinball_Median (**2.05s**), MLP_Huber (**1.76s**) 相似，而 CAAR (**3.40s**) 稍长，但均在合理范围内。
 
 **相关图表:**
-*   MSE 性能对比: ![MSE Performance Comparison](results/real_california_y_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/real_california_y_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/real_california_y_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/real_california_y_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/real_california_y_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/real_california_y_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/real_california_y_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/real_california_y_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/real_california_y_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/real_california_y_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/real_california_y_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/real_california_y_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/real_california_y_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/real_california_y_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/real_california_y_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/real_california_y_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/real_california_y_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/real_california_y_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/real_california_y_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/real_california_y_outliers/trend_R².png)
 
 ### 4.2 加州住房价格数据集 - X轴异常 (California Housing - X-axis Outliers)
 
@@ -204,16 +204,16 @@
 *   **训练效率：** CAAR (**3.63s**) 的训练时间与GAAR (**3.53s**) 相似，略长于其他MLP系列模型 (MLP_Cauchy **2.78s**, MLP_Pinball_Median **2.58s**, MLP_Huber **2.01s**)。
 
 **相关图表:**
-*   MSE 性能对比: ![MSE Performance Comparison](results/real_california_x_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/real_california_x_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/real_california_x_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/real_california_x_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/real_california_x_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/real_california_x_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/real_california_x_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/real_california_x_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/real_california_x_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/real_california_x_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/real_california_x_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/real_california_x_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/real_california_x_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/real_california_x_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/real_california_x_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/real_california_x_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/real_california_x_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/real_california_x_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/real_california_x_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/real_california_x_outliers/trend_R².png)
 
 ### 4.3 糖尿病数据集 - Y轴异常 (Diabetes - Y-axis Outliers)
 
@@ -242,16 +242,16 @@
 *   **训练效率：** 所有模型在此小数据集上训练都非常快。CAAR (**0.082s**) 的训练时间与MLP系列模型（0.05-0.09s）相当。
 
 **相关图表:**
-*   MSE 性能对比: ![MSE Performance Comparison](results/real_diabetes_y_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/real_diabetes_y_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/real_diabetes_y_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/real_diabetes_y_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/real_diabetes_y_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/real_diabetes_y_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/real_diabetes_y_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/real_diabetes_y_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/real_diabetes_y_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/real_diabetes_y_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/real_diabetes_y_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/real_diabetes_y_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/real_diabetes_y_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/real_diabetes_y_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/real_diabetes_y_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/real_diabetes_y_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/real_diabetes_y_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/real_diabetes_y_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/real_diabetes_y_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/real_diabetes_y_outliers/trend_R².png)
 
 ### 4.4 Boston Housing 数据集 - Y轴异常 (Boston Housing - Y-axis Outliers)
 
@@ -279,16 +279,16 @@
 *   **训练效率：** 所有模型在此数据集上训练速度都很快。CAAR (**0.099s**) 与其他MLP模型时间相似。
 
 **相关图表:**
-*   MSE 性能对比: ![MSE Performance Comparison](results/real_boston_housing_y_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/real_boston_housing_y_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/real_boston_housing_y_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/real_boston_housing_y_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/real_boston_housing_y_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/real_boston_housing_y_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/real_boston_housing_y_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/real_boston_housing_y_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/real_boston_housing_y_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/real_boston_housing_y_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/real_boston_housing_y_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/real_boston_housing_y_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/real_boston_housing_y_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/real_boston_housing_y_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/real_boston_housing_y_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/real_boston_housing_y_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/real_boston_housing_y_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/real_boston_housing_y_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/real_boston_housing_y_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/real_boston_housing_y_outliers/trend_R².png)
 
 ### 4.5 Communities and Crime 数据集 - Y轴异常 (Communities and Crime - Y-axis Outliers)
 
@@ -317,16 +317,16 @@
 *   **多数其他基线模型失效，包括MLP_Huber (R² -1.565)。**
 
 **相关图表:**
-*   MSE 性能对比: ![MSE Performance Comparison](results/real_communities_crime_y_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/real_communities_crime_y_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/real_communities_crime_y_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/real_communities_crime_y_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/real_communities_crime_y_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/real_communities_crime_y_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/real_communities_crime_y_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/real_communities_crime_y_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/real_communities_crime_y_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/real_communities_crime_y_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/real_communities_crime_y_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/real_communities_crime_y_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/real_communities_crime_y_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/real_communities_crime_y_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/real_communities_crime_y_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/real_communities_crime_y_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/real_communities_crime_y_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/real_communities_crime_y_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/real_communities_crime_y_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/real_communities_crime_y_outliers/trend_R².png)
 
 ### 4.6 Concrete Compressive Strength 数据集 - Y轴异常 (Concrete Strength - Y-axis Outliers)
 
@@ -354,16 +354,16 @@
 *   **训练效率：** CAAR (**0.22s**) 训练时间与MLP系列模型（0.13-0.19s）相近。
 
 **相关图表:**
-*   MSE 性能对比: ![MSE Performance Comparison](results/real_concrete_strength_y_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/real_concrete_strength_y_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/real_concrete_strength_y_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/real_concrete_strength_y_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/real_concrete_strength_y_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/real_concrete_strength_y_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/real_concrete_strength_y_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/real_concrete_strength_y_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/real_concrete_strength_y_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/real_concrete_strength_y_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/real_concrete_strength_y_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/real_concrete_strength_y_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/real_concrete_strength_y_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/real_concrete_strength_y_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/real_concrete_strength_y_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/real_concrete_strength_y_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/real_concrete_strength_y_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/real_concrete_strength_y_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/real_concrete_strength_y_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/real_concrete_strength_y_outliers/trend_R².png)
 
 ### 4.7 Bike Sharing 数据集 - Y轴异常 (Bike Sharing - Y-axis Outliers)
 
@@ -393,16 +393,16 @@
 *   **训练效率：** CAAR (**3.24s**) 训练时间与MLP系列模型（1.84s-2.53s）和RandomForest (2.35s) 接近。
 
 **相关图表:**
-*   MSE 性能对比: ![MSE Performance Comparison](results/real_bike_sharing_y_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/real_bike_sharing_y_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/real_bike_sharing_y_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/real_bike_sharing_y_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/real_bike_sharing_y_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/real_bike_sharing_y_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/real_bike_sharing_y_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/real_bike_sharing_y_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/real_bike_sharing_y_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/real_bike_sharing_y_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/real_bike_sharing_y_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/real_bike_sharing_y_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/real_bike_sharing_y_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/real_bike_sharing_y_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/real_bike_sharing_y_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/real_bike_sharing_y_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/real_bike_sharing_y_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/real_bike_sharing_y_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/real_bike_sharing_y_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/real_bike_sharing_y_outliers/trend_R².png)
 
 ### 4.8 Parkinsons Telemonitoring 数据集 - Y轴异常 (Parkinsons Telemonitoring - Y-axis Outliers)
 
@@ -431,16 +431,16 @@
 *   **训练效率：** CAAR (**1.03s**) 的训练时间与MLP系列模型（0.65s-0.88s）和RandomForest (3.30s) 相比在合理范围内。
 
 **相关图表:**
-*   MSE 性能对比: ![MSE Performance Comparison](results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_MSE.png)
-*   RMSE 性能对比: ![RMSE Performance Comparison](results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_RMSE.png)
-*   MAE 性能对比: ![MAE Performance Comparison](results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_MAE.png)
-*   MdAE 性能对比: ![MdAE Performance Comparison](results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_MdAE.png)
-*   R² 性能对比: ![R2 Performance Comparison](results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_R².png)
-*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](results/real_parkinsons_telemonitoring_y_outliers/trend_MSE.png)
-*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](results/real_parkinsons_telemonitoring_y_outliers/trend_RMSE.png)
-*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](results/real_parkinsons_telemonitoring_y_outliers/trend_MAE.png)
-*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](results/real_parkinsons_telemonitoring_y_outliers/trend_MdAE.png)
-*   R² 趋势图: ![R2 Trend vs Outlier Ratio](results/real_parkinsons_telemonitoring_y_outliers/trend_R².png)
+*   MSE 性能对比: ![MSE Performance Comparison](../results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_MSE.png)
+*   RMSE 性能对比: ![RMSE Performance Comparison](../results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_RMSE.png)
+*   MAE 性能对比: ![MAE Performance Comparison](../results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_MAE.png)
+*   MdAE 性能对比: ![MdAE Performance Comparison](../results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_MdAE.png)
+*   R² 性能对比: ![R2 Performance Comparison](../results/real_parkinsons_telemonitoring_y_outliers/performance_comparison_R².png)
+*   MSE 趋势图: ![MSE Trend vs Outlier Ratio](../results/real_parkinsons_telemonitoring_y_outliers/trend_MSE.png)
+*   RMSE 趋势图: ![RMSE Trend vs Outlier Ratio](../results/real_parkinsons_telemonitoring_y_outliers/trend_RMSE.png)
+*   MAE 趋势图: ![MAE Trend vs Outlier Ratio](../results/real_parkinsons_telemonitoring_y_outliers/trend_MAE.png)
+*   MdAE 趋势图: ![MdAE Trend vs Outlier Ratio](../results/real_parkinsons_telemonitoring_y_outliers/trend_MdAE.png)
+*   R² 趋势图: ![R2 Trend vs Outlier Ratio](../results/real_parkinsons_telemonitoring_y_outliers/trend_R².png)
 
 ### 4.9 关于结果的初步讨论
 
