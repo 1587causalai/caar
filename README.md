@@ -7,7 +7,7 @@
 ## 项目结构
 
 ```
-robust-regression-experiment/
+caar/
 ├── src/                      # 源代码目录
 │   ├── models/               # 模型实现
 │   │   ├── caar.py           # CAAR模型实现
@@ -69,14 +69,40 @@ python src/experiments/synthetic_exp.py
 python src/experiments/real_exp.py
 ```
 
-## 实验报告
+## 📚 文档与报告
+
+### 在线文档站点
+
+我们提供了完整的在线文档站点，包含详细的实验报告和可视化结果：
+
+- **在线访问**: [项目文档站点](https://1587causalai.github.io/caar)
+- **本地预览**: `python serve_docs.py`
+
+### 文档内容
 
 详细的实验报告位于`docs/`目录下：
 
-- `experiment_summary.md`: 实验结果总结
+- `experiment_design.md`: 实验设计方案
 - `experiment_method.md`: 实验方法详解
+- `network_design.md`: 神经网络架构设计
+- `synthetic_exp_report.md`: 合成数据实验报告
+- `real_exp_report.md`: 真实数据实验报告
+- `experiment_summary.md`: 实验结果总结
 - `experiment_conclusion.md`: 实验结论分析
-- `full_report.md`: 完整实验报告
+
+### 本地文档服务
+
+```bash
+# 启动文档服务器（推荐）
+python serve_docs.py
+
+# 或使用 docsify-cli
+npm install -g docsify-cli
+docsify serve docs
+
+# 或使用 Python 内置服务器
+cd docs && python -m http.server 3000
+```
 
 ## 主要发现
 

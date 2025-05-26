@@ -1,0 +1,43 @@
+name: Deploy Docs to GitHub Pages
+
+on:
+  push:
+    branches: [ main, master ]
+    paths: [ 'docs/**' ]
+  pull_request:
+    branches: [ main, master ]
+    paths: [ 'docs/**' ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install docsify-cli
+      run: npm install -g docsify-cli
+    
+    - name: Build docs
+      run: |
+        # 确保 docs 目录存在必要文件
+        ls -la docs/
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        force_orphan: true
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+        commit_message: 'Deploy docs to GitHub Pages' 
