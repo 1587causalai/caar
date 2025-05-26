@@ -47,11 +47,15 @@ python -m http.server 3000
    - GitHub Actions 会自动构建和部署
    - 访问 `https://1587causalai.github.io/caar`
 
-2. **手动设置**：
+2. **GitHub Pages 设置**：
    - 进入仓库 Settings → Pages
    - Source 选择 "Deploy from a branch"
    - Branch 选择 `gh-pages`
    - 保存设置
+
+3. **故障排除**：
+   - 如果遇到权限错误，进入 Settings → Actions → General，选择 "Read and write permissions"
+   - 查看 Actions 标签页的部署日志
 
 ### Netlify
 
