@@ -7,33 +7,44 @@
 ## 项目结构
 
 ```
-caar/
+robust-regression-experiment/
 ├── src/                      # 源代码目录
 │   ├── models/               # 模型实现
-│   │   ├── caar.py           # CAAR模型实现
-│   │   ├── baseline.py       # 基线模型实现
-│   │   └── robust.py         # 现有鲁棒回归方法实现
 │   ├── data/                 # 数据处理模块
-│   │   ├── synthetic.py      # 合成数据生成
-│   │   └── real.py           # 真实数据加载
 │   ├── utils/                # 工具模块
-│   │   ├── metrics.py        # 评估指标
-│   │   ├── visualization.py  # 可视化工具
-│   │   └── document.py       # 文档生成
 │   ├── experiments/          # 实验执行模块
-│   │   ├── synthetic_exp.py  # 合成数据实验
-│   │   └── real_exp.py       # 真实数据实验
 │   └── run_experiments.py    # 主实验执行脚本
 ├── data/                     # 数据目录
+│   ├── Bike-Sharing-Dataset.zip
+│   ├── communities.data
+│   ├── communities.names
+│   ├── Concrete_Data.xls
+│   ├── hour.csv
+│   ├── parkinsons_updrs.data
+│   └── winequality-red.csv
 ├── results/                  # 实验结果目录
+│   ├── all_real_results.pkl
+│   ├── all_synthetic_results.pkl
+│   ├── experiment_log.txt
 │   ├── tables/               # 性能表格
-│   └── figures/              # 可视化图表
+│   ├── real_*_outliers/      # 真实数据实验结果
+│   └── synthetic_*_outliers/ # 合成数据实验结果
 ├── docs/                     # 文档目录
-│   ├── experiment_summary.md # 实验结果总结
+│   ├── _navbar.md
+│   ├── _sidebar.md
+│   ├── index.html
+│   ├── experiment_design.md  # 实验设计方案
 │   ├── experiment_method.md  # 实验方法详解
-│   ├── experiment_conclusion.md # 实验结论分析
-│   ├── full_report.md        # 完整实验报告
-│   └── images/               # 文档引用图片
+│   ├── experiment_summary.md # 实验结果总结
+│   ├── network_design.md     # 神经网络架构设计
+│   ├── real_exp_report.md    # 真实数据实验报告
+│   ├── synthetic_exp_report.md # 合成数据实验报告
+│   ├── images/               # 文档引用图片
+│   └── README.md
+├── notebooks/                # Jupyter笔记本
+├── convert_to_html_img.py    # 图片路径转换工具
+├── download_data.py          # 数据下载脚本
+├── serve_docs.py             # 文档服务器
 ├── requirements.txt          # 项目依赖
 └── README.md                 # 项目说明
 ```
@@ -115,6 +126,20 @@ cd docs && python -m http.server 3000
 3. **稳定的预测**：CAAR模型在中位数绝对误差（MdAE）指标上表现尤为突出，这表明其预测结果更加稳定可靠。
 
 4. **计算效率**：CAAR模型在保持高鲁棒性的同时，计算效率也较为理想，特别是与其他复杂的鲁棒方法相比。
+
+## 引用
+
+如果您在研究中使用了本项目的CAAR模型或相关代码，请引用我们的工作：
+
+```bibtex
+@misc{caar2025,
+  title={CAAR: Cauchy Abduction Action Regression for Robust Regression with Outliers},
+  author={Heyang Gong},
+  year={2025},
+  howpublished={\url{https://github.com/1587causalai/robust-regression-experiment}},
+  note={GitHub repository}
+}
+```
 
 ## 联系方式
 
