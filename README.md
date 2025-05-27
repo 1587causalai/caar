@@ -115,6 +115,20 @@ docsify serve docs
 cd docs && python -m http.server 3000
 ```
 
+### 部署到GitHub Pages
+
+由于文档中引用了大量实验结果图片，部署前需要运行部署脚本：
+
+```bash
+# 运行部署脚本，将图片复制到docs目录
+./deploy_docs.sh
+
+# 然后提交并推送
+git add docs/results
+git commit -m "Add results images for GitHub Pages"
+git push
+```
+
 ## 主要发现
 
 通过对合成数据和真实数据的全面实验，我们验证了CAAR模型在处理含异常点数据时的卓越性能：
