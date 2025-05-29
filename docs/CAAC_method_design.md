@@ -250,13 +250,22 @@ $$\frac{\partial F_S(s; \mu, \gamma)}{\partial \mu} = -\frac{1}{\pi} \cdot \frac
     *   $\vec{\gamma}_C(h) = (\gamma_{C_1}(h), ..., \gamma_{C_{d_c}}(h))$ (确保 $\gamma_{C_i}(h) > 0$)
 
 3.  **$K$ 条路径的柯西得分参数生成 ($S_j$)**:
-    对于每一条路径 $j \in \{1, ..., K\}$ (通常 $K$ 等于类别数量)，从 $(\vec{\mu}_C(h), \vec{\gamma}_C(h))$ 生成该路径下的一维潜在柯西得分 $S_j$ 的参数：
-    *   位置参数: $\mu_{S_j}(h) = f_{\mu}^{(j)}(\vec{\mu}_C(h), \vec{\gamma}_C(h))$
-    *   尺度参数: $\gamma_{S_j}(h) = f_{\gamma}^{(j)}(\vec{\mu}_C(h), \vec{\gamma}_C(h))$ (确保 $>0$)
-    其中 $f_{\mu}^{(j)}$ 和 $f_{\gamma}^{(j)}$ 是可学习的函数（例如，每个路径 $j$ 对应一个独立的小型MLP或线性层）。
+    对于每一条路径 $j \in \{1, ..., K\}$ (通常 $K$ 等于类别数量)，从 $(\vec{\mu}_C(h), \vec{\gamma}_C(h))$ 通过特定于路径 $j$ 的 **线性变换** 生成该路径下的一维潜在柯西得分 $S_j$ 的参数：
+    *   可学习参数 (每个路径 $j$ 独有)：
+        *   权重向量 $\vec{W}_{\mu}^{(j)} \in \mathbb{R}^{d_c}$ 和标量偏置 $b_{\mu}^{(j)}$ 用于生成位置参数。
+        *   权重向量 $\vec{W}_{\gamma}^{(j)} \in \mathbb{R}^{d_c}$ 和可学习的标量基础尺度 $\text{raw_}\gamma_{\epsilon_0}^{(j)}$ 用于生成尺度参数。
+
+    *   位置参数: 
+        $$\mu_{S_j}(h) = (\vec{W}_{\mu}^{(j)})^T \vec{\mu}_C(h) + b_{\mu}^{(j)}$$
+    *   尺度参数 (确保正性): 
+        $$\gamma_{\epsilon_0}^{(j)} = \text{softplus}(\text{raw_}\gamma_{\epsilon_0}^{(j)}) \text{ or } \exp(\text{raw_}\gamma_{\epsilon_0}^{(j)})$$ 
+        $$\gamma_{S_j}(h) = \sum_{i=1}^{d_c} |W_{\gamma,i}^{(j)}| \gamma_{C_i}(h) + \gamma_{\epsilon_0}^{(j)}$$
+        这种形式保证了 $\gamma_{S_j}(h)$ 的正定性，并且反映了柯西变量线性组合后尺度参数的叠加特性。
 
 4.  **固定随机路径选择概率 ($\vec{\pi}$)**:
-    一组 $K$ 个可学习的、与输入无关的概率 $\vec{\pi} = (\pi_1, ..., \pi_K)$，满足 $\pi_j \ge 0$ 且 $\sum_{j=1}^K \pi_j = 1$。这些是全局模型参数，可以通过softmax层作用于 $K$ 个可学习的logit得到。
+    一组 $K$ 个全局固定的、可学习的参数 (logits) $\vec{l} = (l_1, ..., l_K)$。路径选择概率 $\vec{\pi} = (\pi_1, ..., \pi_K)$ 由这些logits通过softmax函数生成：
+    $$\pi_j = \frac{\exp(l_j)}{\sum_{p=1}^K \exp(l_p)}$$
+    这些概率满足 $\pi_j \ge 0$ 且 $\sum_{j=1}^K \pi_j = 1$，并且不依赖于当前输入 $x$。
 
 5.  **固定分类阈值 ($\vec{\theta}^*$)**:
     一组 $K-1$ 个可学习的、与输入无关的、有序的阈值 $\vec{\theta}^* = (\theta_1^* < \theta_2^* < ... < \theta_{K-1}^*)$。这些也是全局模型参数。
