@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>CAAR 项目文档</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="CAAR (Cauchy Abduction Action Regression) 项目文档">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta name="keywords" content="因果推理,机器学习,柯西分布,回归分析,深度学习">
+  
+  <!-- Docsify主题 -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  
+  <!-- KaTeX CSS - 移到head部分以确保优先加载 -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+  
+  <!-- 自定义样式 -->
+  <style>
+    :root {
+      --base-color: #2c3e50;
+      --theme-color: #42b883;
+      --sidebar-width: 300px;
+    }
+    
+    .markdown-section {
+      max-width: 1000px;
+      padding: 30px 30px 40px;
+    }
+    
+    .sidebar {
+      background-color: #f8f9fa;
+      border-right: 1px solid #e9ecef;
+    }
+    
+    .sidebar > h1 {
+      color: var(--base-color);
+      font-weight: bold;
+    }
+    
+    .sidebar-nav > ul > li > p {
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .markdown-section h1,
+    .markdown-section h2,
+    .markdown-section h3 {
+      color: var(--base-color);
+    }
+    
+    /* 代码块样式 */
+    .markdown-section pre {
+      background-color: #2d3748;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    
+    /* 表格样式 */
+    .markdown-section table {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* 提示框样式 */
+    .markdown-section blockquote {
+      border-left: 4px solid var(--theme-color);
+      background: rgba(66, 184, 131, 0.1);
+      padding: 1rem 1.5rem;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    /* 数学公式样式优化 */
+    .katex {
+      font-size: 1.1em;
+    }
+    
+    .katex-display {
+      margin: 1.5em 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">加载中...</div>
+  
+  <script>
+    window.$docsify = {
+      name: 'CAAR 项目',
+      repo: 'https://github.com/1587causalai/caar',
+      homepage: 'README.md',
+      
+      // 侧边栏
+      loadSidebar: true,
+      loadNavbar: true,
+      subMaxLevel: 2,
+      
+      // 其他配置
+      auto2top: true,
+      maxLevel: 2,
+      
+      // 搜索功能
+      search: {
+        maxAge: 86400000,
+        paths: 'auto',
+        placeholder: '🔍 搜索文档...',
+        noData: '😞 没有找到结果',
+        depth: 6
+      },
+      
+      // 代码复制
+      copyCode: {
+        buttonText: '复制',
+        errorText: '复制失败',
+        successText: '已复制'
+      },
+      
+      // 分页
+      pagination: {
+        previousText: '上一页',
+        nextText: '下一页',
+        crossChapter: true,
+        crossChapterText: true,
+      },
+      
+      // 字数统计
+      count: {
+        countable: true,
+        fontsize: '0.9em',
+        color: 'rgb(90,90,90)',
+        language: 'chinese'
+      },
+      
+      // 数学公式配置 - 关键配置！
+      latex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      
+      // 插件
+      plugins: [
+        function(hook, vm) {
+          hook.beforeEach(function (html) {
+            var url = 'https://github.com/1587causalai/caar/blob/main/docs/' + vm.route.file
+            var editHtml = '[:memo: 编辑此页](' + url + ')\n'
+            return editHtml + html
+          })
+        }
+      ]
+    }
+  </script>
+  
+  <!-- Docsify核心 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  
+  <!-- 搜索插件 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  
+  <!-- KaTeX 数学公式支持 -->
+  <script src="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <!-- marked (docsify-katex 依赖) -->
+  <script src="//cdn.jsdelivr.net/npm/marked@4"></script>
+  <!-- docsify-katex 插件 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
+  
+  <!-- 其他功能插件 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-count/dist/countable.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+  
+  <!-- 代码高亮 -->
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+</body>
+</html>
