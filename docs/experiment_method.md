@@ -181,9 +181,7 @@ CAAR模型的关键在于如何利用柯西分布的特性来实现鲁棒回归�
 
 使用极大似然估计（MLE）来训练整个模型。损失函数是观测数据 $y_i$ 在模型预测的柯西分布下的负对数似然（NLL）
 
-$$
-L = - \sum_{i=1}^n \log \left[ \frac{1}{\pi \gamma_{y_i} \left(1 + \left(\frac{y_i - \mu_{y_i}}{\gamma_{y_i}}\right)^2\right)} \right]
-$$
+$$L = - \sum_{i=1}^n \log \left[ \frac{1}{\pi \gamma_{y_i} \left(1 + \left(\frac{y_i - \mu_{y_i}}{\gamma_{y_i}}\right)^2\right)} \right]$$
 
 这种设计使得CAAR能够端到端地学习位置和尺度参数，实现对预测结果中心趋势和不确定性的同时建模。
 

@@ -34,7 +34,7 @@
 ### 3. 行动网络 (Action Network)
 
 *   **作用**: 定义从**统一推断网络**产生的 `location_param` 到最终回归结果 `mu_y`（点估计）的映射规则。
-*   **实现**: 对于所有模型，这都是一个独立的、简单的**线性层**模块，例如 `self.action_net = ActionNetwork(latent_dim)`，执行 `mu_y = w^T * location_param + b` 的操作。
+*   **实现**: 对于所有模型，这都是一个独立的、简单的**线性层**模块，例如 `self.action_net = ActionNetwork(latent_dim)`，执行 $\text{mu\_y} = w^T \cdot \text{location\_param} + b$ 的操作。
 *   **关键点**: 该网络的权重 `w` 在 `CAAR` 和 `GAAR` 中也扮演着重要角色，它们被用于将 `scale_param` 转换为最终预测 `y` 的尺度参数 `gamma_y` 或 `sigma_y`。
 *   **输出**: `mu_y` (预测的中心趋势，点估计值)。
 
@@ -47,12 +47,12 @@
 
 | 模型类型             | Feature Network (F)                               | Unified Abduction Network (A_params)                                   | Action Network (A_output)                                      | `scale_param` 的利用与学习 (通过损失函数决定)                        | 损失函数及对不确定性的建模 |
 | :------------------- | :------------------------------------------------ | :------------------------------------------------------------- | :------------------------------------------------------------- | :------------------------------------------------------------------- | :------------------------- |
-| **CAAR**             | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 `mu_y`)       | **充分利用**: `location_param` 被视为柯西位置 `l_i`，`scale_param` 被视为柯西尺度 `s_i`。`s_i` 结合 `action_net` 权重 (`|w|`) 计算 `gamma_y`，用于柯西NLL。 | **端到端学习**: 柯西NLL损失同时优化 `mu_y` 和 `gamma_y`，实现鲁棒的点估计与不确定性量化。 |
-| **GAAR**             | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 `mu_y`)       | **充分利用**: `location_param` 被视为高斯均值 `mu_z`，`scale_param` 被视为高斯标准差 `sigma_z`。`sigma_z` 结合 `action_net` 权重 (`w^2`) 计算 `sigma_y`，用于高斯NLL。 | **端到端学习**: 高斯NLL损失同时优化 `mu_y` 和 `sigma_y`，实现点估计与不确定性量化。 |
-| **MLP (MSE)**        | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 `mu_y`)       | **未被利用/学习**: `scale_param` 不参与MSE损失计算，相关权重不会得到有效更新。`location_param` 用于预测。 | **点估计**: 仅优化 `mu_y` (来自`location_param`)，使用MSE损失，不显式建模不确定性。对异常值敏感。 |
-| **MLP_Huber**        | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 `mu_y`)       | **未被利用/学习**: 同MLP (MSE)。                                     | **点估计 (鲁棒)**: 使用Huber损失优化 `mu_y` (来自`location_param`)，对异常值具有一定的鲁棒性，但不显式建模不确定性。 |
-| **MLP_Pinball**      | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 `mu_y`)       | **未被利用/学习**: 同MLP (MSE)。                                     | **分位数估计**: 使用Pinball损失优化 `mu_y` (来自`location_param`)，目标是预测给定分位数。不显式建模不确定性。 |
-| **MLP_Cauchy** (simplified) | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 `mu_y`)       | **未被利用/学习**: 同MLP (MSE)。                                     | **点估计 (鲁棒)**: 使用简化柯西损失 (`log(1+err^2)`)优化 `mu_y` (来自`location_param`)，对异常值具有鲁棒性，但不显式建模不确定性。 |
+| **CAAR**             | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 $\mu_y$)       | **充分利用**: `location_param` 被视为柯西位置 $l_i$，`scale_param` 被视为柯西尺度 $s_i$。$s_i$ 结合 `action_net` 权重 ($|w|$) 计算 $\gamma_y$，用于柯西NLL。 | **端到端学习**: 柯西NLL损失同时优化 $\mu_y$ 和 $\gamma_y$，实现鲁棒的点估计与不确定性量化。 |
+| **GAAR**             | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 $\mu_y$)       | **充分利用**: `location_param` 被视为高斯均值 $\mu_z$，`scale_param` 被视为高斯标准差 $\sigma_z$。$\sigma_z$ 结合 `action_net` 权重 ($w^2$) 计算 $\sigma_y$，用于高斯NLL。 | **端到端学习**: 高斯NLL损失同时优化 $\mu_y$ 和 $\sigma_y$，实现点估计与不确定性量化。 |
+| **MLP (MSE)**        | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 $\mu_y$)       | **未被利用/学习**: `scale_param` 不参与MSE损失计算，相关权重不会得到有效更新。`location_param` 用于预测。 | **点估计**: 仅优化 $\mu_y$ (来自`location_param`)，使用MSE损失，不显式建模不确定性。对异常值敏感。 |
+| **MLP_Huber**        | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 $\mu_y$)       | **未被利用/学习**: 同MLP (MSE)。                                     | **点估计 (鲁棒)**: 使用Huber损失优化 $\mu_y$ (来自`location_param`)，对异常值具有一定的鲁棒性，但不显式建模不确定性。 |
+| **MLP_Pinball**      | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 $\mu_y$)       | **未被利用/学习**: 同MLP (MSE)。                                     | **分位数估计**: 使用Pinball损失优化 $\mu_y$ (来自`location_param`)，目标是预测给定分位数。不显式建模不确定性。 |
+| **MLP_Cauchy** (simplified) | 显式的 `FeatureNetwork` 模块 (输出 `representation`) | 显式的统一 `AbductionNetwork`，输出 (`location_param`, `scale_param`) | 显式的 `ActionNetwork` (将 `location_param` 映射到 $\mu_y$)       | **未被利用/学习**: 同MLP (MSE)。                                     | **点估计 (鲁棒)**: 使用简化柯西损失 ($\log(1+\text{err}^2)$)优化 $\mu_y$ (来自`location_param`)，对异常值具有鲁棒性，但不显式建模不确定性。 |
 
 ## 统一架构的意义和核心差异点
 
