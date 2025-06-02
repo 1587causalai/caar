@@ -3,6 +3,7 @@ data/
 !src/data/
 
 results
+2025*.md
 
 *.pyc
 __pycache__/

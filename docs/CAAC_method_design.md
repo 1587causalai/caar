@@ -1,8 +1,8 @@
-# CAAC (Cauchy Inference Action Classification) 方法设计文档
+# CAAC (Cauchy Abduction Action Classification) 方法设计文档
 
 ## 1. 背景与动机
 
-在成功构建了用于回归任务的 CAAR (Cauchy Additive Autoregressive Regression) 方法后，我们现在着手设计一个统一的因果大模型架构，能够同时处理分类和回归任务。CAAC 旨在成为这个架构中处理分类任务的核心组件。
+在成功构建了用于回归任务的 CAAR (Cauchy Abduction Action Regression) 方法后，我们现在着手设计一个统一的因果大模型架构，能够同时处理分类和回归任务。为此我们先单独处理分类任务， CAAC 旨在成为这个架构中处理分类任务的核心组件。
 
 我们的核心目标是：
 - 利用柯西分布的重尾特性来建模潜在变量，提高模型对异常值的鲁棒性
@@ -183,19 +183,64 @@ $$P(Y=k|x) = \sum_{j=1}^K \pi_j \cdot P(Y=k|M=j, x)$$
 **基本约束**：$\theta_1^* < \theta_2^* < ... < \theta_{K-1}^*$
 
 **初始化策略**：
-1. **均匀分布**：$\theta_k^* = \Phi^{-1}(\frac{k}{K})$，其中 $\Phi^{-1}$ 是标准正态分布的逆CDF
+1. **均匀分布**：$\theta_k^* = \Phi^{-1}(\frac{k}{K})$，其中 $\Phi^{-1}$ 是标准Cauchy分布的逆CDF
 2. **基于先验**：如果有类别分布的先验知识，可以设置为累积概率的分位点
 3. **对称分布**：$\theta_k^* = (k - \frac{K}{2}) \times \Delta$，其中 $\Delta \approx 1.0$
 
-#### 4.4.2 阈值的学习与约束
+#### 4.4.2 阈值的参数化、学习与初始化
 
-**约束实现**：
-- 参数化为第一个阈值 $\theta_1^*$ 和正的差值 $\{\delta_2^*, ..., \delta_{K-1}^*\}$
-- $\delta_k^* = \exp(\text{raw\_}\delta_k^*)$ 或 $\delta_k^* = \text{softplus}(\text{raw\_}\delta_k^*)$
+为了让这些阈值 $\theta_k^*$ 能够通过梯度下降进行学习，同时还要保证它们始终满足 $\theta_1^* < \theta_2^* < ... < \theta_{N_{cl}-1}^*$ 的顺序约束（其中 $N_{cl}$ 是类别数量，对应正文中使用的 $K$ 作为类别数时的场景，在此为避免与路径数量 $K_{paths}$ 混淆，我们明确为 $N_{cl}$ 个类别，需要 $N_{cl}-1$ 个阈值），我们不直接学习 $\theta_k^*$ 本身，而是学习一组更容易处理的原始参数（raw parameters）。
 
-**学习率调整**：
-- 阈值参数通常需要比网络权重更小的学习率
-- 建议使用 $\text{lr}_{\theta} = 0.1 \times \text{lr}_{\text{main}}$
+**1. 可学习的原始参数 (Learnable Raw Parameters):**
+
+我们定义以下 $N_{cl}-1$ 个原始参数作为模型中实际学习的对象：
+*   第一个阈值的原始参数：$\text{raw\_}\theta_1^*$
+*   后续阈值与前一个阈值之间正差值的原始参数：$\{\text{raw\_}\delta_2^*, \text{raw\_}\delta_3^*, ..., \text{raw\_}\delta_{N_{cl}-1}^*\}$
+
+总共有 $1 + (N_{cl}-2) = N_{cl}-1$ 个可学习的原始参数。
+
+**2. 从原始参数计算实际使用的阈值 $\theta_k^*$:**
+
+实际在模型中使用的阈值 $\theta_k^*$ 是通过下面的方式从这些可学习的原始参数计算得到的：
+
+*   **第一个阈值 $\theta_1^*$**:
+    $$\theta_1^* = \text{raw\_}\theta_1^*$$
+    它直接由其原始参数决定。
+
+*   **后续阈值 $\theta_k^*$ (对于 $k = 2, ..., N_{cl}-1$):**
+    首先，我们计算阈值之间的正差值 $\delta_k^*$。为了确保这些差值是正的，我们对相应的原始参数 $\text{raw\_}\delta_k^*$ 应用一个保证输出为正的函数，例如 `exp` 或 `softplus`：
+    $$\delta_k^* = \exp(\text{raw\_}\delta_k^*) \quad \text{或} \quad \delta_k^* = \text{softplus}(\text{raw\_}\delta_k^*)$$
+    然后，后续的阈值通过累加这些正差值得到：
+    $$\theta_2^* = \theta_1^* + \delta_2^*$$
+    $$\theta_3^* = \theta_2^* + \delta_3^* = \theta_1^* + \delta_2^* + \delta_3^*$$
+    $$\vdots$$
+    $$\theta_k^* = \theta_{k-1}^* + \delta_k^* = \text{raw\_}\theta_1^* + \sum_{i=2}^{k} \delta_i^*$$
+
+    这种参数化方式确保了只要 $\delta_i^*$ 是正的（通过 $\exp$ 或 $\text{softplus}$ 函数保证），那么 $\theta_1^* < \theta_2^* < ... < \theta_{N_{cl}-1}^*$ 的顺序就会被严格保持。
+
+**3. 原始参数的初始化:**
+
+初始化这些原始参数的目的是让它们在训练开始时就能产生一组合理的初始阈值 $\theta_k^{*(init)}$。这些初始阈值可以根据 "4.4.1 阈值数量与位置" 中提到的策略（如均匀分布或对称分布）来设定。
+
+假设我们已经有了一组期望的初始阈值 $\theta_1^{*(init)}, \theta_2^{*(init)}, ..., \theta_{N_{cl}-1}^{*(init)}$，并且它们满足 $\theta_1^{*(init)} < \theta_2^{*(init)} < ...$。
+
+*   **初始化 $\text{raw\_}\theta_1^*$**:
+    $$\text{raw\_}\theta_1^{*(init)} = \theta_1^{*(init)}$$
+
+*   **初始化 $\text{raw\_}\delta_k^*$ (对于 $k = 2, ..., N_{cl}-1$):**
+    首先计算出期望的初始差值：
+    $$\delta_k^{*(init)} = \theta_k^{*(init)} - \theta_{k-1}^{*(init)}$$
+    由于我们在初始化时确保了 $\theta_k^{*(init)} > \theta_{k-1}^{*(init)}$，所以 $\delta_k^{*(init)}$ 必然为正。
+    然后，我们通过所选正值函数的逆运算来得到 $\text{raw\_}\delta_k^{*(init)}$：
+    *   如果使用 $\delta_k^* = \exp(\text{raw\_}\delta_k^*)$，那么：
+        $$\text{raw\_}\delta_k^{*(init)} = \log(\delta_k^{*(init)}) = \log(\theta_k^{*(init)} - \theta_{k-1}^{*(init)})$$
+    *   如果使用 $\delta_k^* = \text{softplus}(\text{raw\_}\delta_k^*)$，那么：
+        $$\text{raw\_}\delta_k^{*(init)} = \text{softplus}^{-1}(\delta_k^{*(init)}) = \log(\exp(\delta_k^{*(init)}) - 1)$$
+
+**4. 学习率调整:**
+
+这些阈值相关的可学习参数（即 $\text{raw\_}\theta_1^*$ 和 $\text{raw\_}\delta_k^*$）通常需要与网络中的其他权重（如用于生成因果表征的编码器权重）使用不同的学习率。经验上，它们可能需要更小的学习率以保证训练的稳定性：
+*   建议使用 $\text{lr}_{	heta} = \alpha \times \text{lr}_{\text{main}}$，其中 $\alpha$ 通常是一个较小的值（例如原文建议的 $0.1$）。
 
 ### 4.5 路径选择概率 $\vec{\pi}$ 的设计
 
@@ -269,4 +314,74 @@ CAAC-SPSFT 方案通过渐进式的设计改进，最终实现了：
 **下一步工作重点**：
 1. **实验验证**：在真实分类任务上验证不同参数设计选择的有效性
 2. **理论分析**：进一步分析混合柯西分布的表达能力边界
-3. **与CAAR统一**：探索将CAAC-SPSFT与回归任务的CAAR方法统一到同一框架中 
+3. **与CAAR统一**：探索将CAAC-SPSFT与回归任务的CAAR方法统一到同一框架中
+
+## 6. 附录：CAAC-SPSFT 在特定分类任务上的详细推导
+
+本附录旨在详细阐述 CAAC-SPSFT 模型在常见的二分类和三分类任务中的具体数学表达。为清晰起见，我们首先定义：
+- $N_{cl}$: 分类任务中的类别数量。
+- $K_{paths}$: 模型中并行的"解读路径"数量 (在正文部分有时用 $K$ 指代)。
+- $\vec{\theta}^* = (\theta_1^* < \theta_2^* < ... < \theta_{N_{cl}-1}^*)$: 全局固定的分类阈值。我们额外定义 $\theta_0^* = -\infty$ 和 $\theta_{N_{cl}}^* = +\infty$。
+
+模型的核心组件如因果表征 $C$ 的参数 $(\vec{\mu}_C(h), \vec{\gamma}_C(h))$ 的生成、每条路径 $j$ 的柯西得分参数 $(\mu_{S_j}(h), \gamma_{S_j}(h))$ 的计算，以及路径选择概率 $\pi_j$ 的计算方式，均与正文 3.2 节所述保持一致。柯西分布的累积分布函数 (CDF) $F_{S_j}(s)$ 定义为：
+$$F_{S_j}(s) = \frac{1}{2} + \frac{1}{\pi} \arctan\left(\frac{s - \mu_{S_j}(h)}{\gamma_{S_j}(h)}\right)$$
+
+### 6.1 二分类 (Binary Classification, $N_{cl}=2$)
+
+#### 6.1.1 模型设定
+- **类别**: $C_1, C_2$ (例如，对应标签 $Y=1, Y=2$)
+- **固定阈值**: $N_{cl}-1 = 1$ 个阈值，记为 $\theta_1^*$。
+- **辅助阈值**: $\theta_0^* = -\infty, \theta_2^* = +\infty$。
+- **解读路径数量**: $K_{paths}$
+
+#### 6.1.2 单路径分类概率
+对于任意一条解读路径 $j \in \{1, ..., K_{paths}\}$：
+- 类别 $C_1$ 的概率:
+  $$P(Y=C_1 | M=j, x) = F_{S_j}(\theta_1^*) - F_{S_j}(\theta_0^*) = F_{S_j}(\theta_1^*)$$
+- 类别 $C_2$ 的概率:
+  $$P(Y=C_2 | M=j, x) = F_{S_j}(\theta_2^*) - F_{S_j}(\theta_1^*) = 1 - F_{S_j}(\theta_1^*)$$
+
+#### 6.1.3 整体分类概率
+最终的分类概率通过对所有路径的概率进行加权平均得到：
+- 类别 $C_1$ 的概率:
+  $$P(Y=C_1 | x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot P(Y=C_1 | M=j, x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot F_{S_j}(\theta_1^*)$$
+- 类别 $C_2$ 的概率:
+  $$P(Y=C_2 | x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot P(Y=C_2 | M=j, x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot (1 - F_{S_j}(\theta_1^*))$$
+
+### 6.2 三分类 (3-Class Classification, $N_{cl}=3$)
+
+#### 6.2.1 模型设定
+- **类别**: $C_1, C_2, C_3$ (例如，对应标签 $Y=1, Y=2, Y=3$)
+- **固定阈值**: $N_{cl}-1 = 2$ 个阈值，记为 $\theta_1^*, \theta_2^*$，且满足 $\theta_1^* < \theta_2^*$。
+- **辅助阈值**: $\theta_0^* = -\infty, \theta_3^* = +\infty$。
+- **解读路径数量**: $K_{paths}$
+
+#### 6.2.2 单路径分类概率
+对于任意一条解读路径 $j \in \{1, ..., K_{paths}\}$：
+- 类别 $C_1$ 的概率:
+  $$P(Y=C_1 | M=j, x) = F_{S_j}(\theta_1^*) - F_{S_j}(\theta_0^*) = F_{S_j}(\theta_1^*)$$
+- 类别 $C_2$ 的概率:
+  $$P(Y=C_2 | M=j, x) = F_{S_j}(\theta_2^*) - F_{S_j}(\theta_1^*)$$
+- 类别 $C_3$ 的概率:
+  $$P(Y=C_3 | M=j, x) = F_{S_j}(\theta_3^*) - F_{S_j}(\theta_2^*) = 1 - F_{S_j}(\theta_2^*)$$
+
+#### 6.2.3 整体分类概率
+最终的分类概率通过对所有路径的概率进行加权平均得到：
+- 类别 $C_1$ 的概率:
+  $$P(Y=C_1 | x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot P(Y=C_1 | M=j, x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot F_{S_j}(\theta_1^*)$$
+- 类别 $C_2$ 的概率:
+  $$P(Y=C_2 | x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot P(Y=C_2 | M=j, x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot (F_{S_j}(\theta_2^*) - F_{S_j}(\theta_1^*))$$
+- 类别 $C_3$ 的概率:
+  $$P(Y=C_3 | x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot P(Y=C_3 | M=j, x) = \sum_{j=1}^{K_{paths}} \pi_j \cdot (1 - F_{S_j}(\theta_2^*))$$
+
+### 6.3 负对数似然 (NLL) 损失函数
+
+对于一个包含 $N$ 个样本的数据集 $\{(x_i, y_i)\}_{i=1}^N$，其中 $x_i$ 是输入特征，$y_i$ 是真实的类别标签 (假设 $y_i \in \{C_1, ..., C_{N_{cl}}\}$)。模型的负对数似然损失函数定义为：
+
+$$NLL = - \sum_{i=1}^N \log P(Y=y_i | x_i)$$
+
+如果类别标签 $y_i$ 采用 one-hot 编码形式，例如 $y_i = (y_{i,1}, ..., y_{i,N_{cl}})$ 其中 $y_{i,c}=1$ 表示样本 $i$ 属于类别 $C_c$，否则为0，则损失函数可以写为：
+
+$$NLL = - \sum_{i=1}^N \sum_{c=1}^{N_{cl}} y_{i,c} \log P(Y=C_c | x_i)$$
+
+模型训练的目标是最小化此 NLL 损失。 
