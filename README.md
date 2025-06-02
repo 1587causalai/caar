@@ -41,7 +41,6 @@ robust-regression-experiment/
 │   ├── synthetic_exp_report.md # 合成数据实验报告
 │   ├── images/               # 文档引用图片
 │   └── README.md
-├── notebooks/                # Jupyter笔记本
 ├── convert_to_html_img.py    # 图片路径转换工具
 ├── download_data.py          # 数据下载脚本
 ├── serve_docs.py             # 文档服务器
