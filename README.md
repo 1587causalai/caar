@@ -1,4 +1,8 @@
-# 项目说明
+# 项目说明(废弃)
+
+
+> 当前项目内容已经演化成为 https://github.com/1587causalai/causal-sklearn
+
 
 ## 项目概述
 
